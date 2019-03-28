@@ -1,3 +1,13 @@
+Credit lenders suffer financial consequences when credit card clients default on payments. Lenders screen all applicants by 
+collecting information, such as age, education, gender, history of past payments, and marital status. With data characteristics 
+collected from credit clients, data mining techniques, such as logistics regression, linear discriminant analysis, decision tree, 
+and random forest can be implemented to determine which individuals are likely to default. It can help decide whether to grant credit 
+to an applicant and derive a predicted probability accuracy of default payments. Not only is predicting a probability accuracy of 
+default payments helpful for credit lenders but identifying significant predictors from data mining models as well. 
+
+From the dataset of default payments of credit clients in Taiwan found at UC Irvine Center for Machine Learning, it contained 30,000
+observations and 23 predictors. The variables consisted of an applicant’s characteristics, such as demographic factors, history of 
+credit payments, and bills of credit card statement
 
 ########################Load data & EDA
 raw.credit.data<-read.csv("creditcarddata.csv")
