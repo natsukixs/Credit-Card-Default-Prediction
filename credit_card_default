@@ -1,0 +1,656 @@
+
+########################Load data & EDA
+raw.credit.data<-read.csv("creditcarddata.csv")
+dim(raw)
+NULL
+dim(raw.credit.data)
+[1] 30000    25
+#dim() function outputs the number of rows followed by the number of columns of a given matrix
+
+summary(raw.credit.data)
+       ID          LIMIT_BAL            SEX          EDUCATION        MARRIAGE    
+ Min.   :    1   Min.   :  10000   Min.   :1.000   Min.   :0.000   Min.   :0.000  
+ 1st Qu.: 7501   1st Qu.:  50000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000  
+ Median :15000   Median : 140000   Median :2.000   Median :2.000   Median :2.000  
+ Mean   :15000   Mean   : 167484   Mean   :1.604   Mean   :1.853   Mean   :1.552  
+ 3rd Qu.:22500   3rd Qu.: 240000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:2.000  
+ Max.   :30000   Max.   :1000000   Max.   :2.000   Max.   :6.000   Max.   :3.000  
+      AGE            PAY_0             PAY_2             PAY_3        
+ Min.   :21.00   Min.   :-2.0000   Min.   :-2.0000   Min.   :-2.0000  
+ 1st Qu.:28.00   1st Qu.:-1.0000   1st Qu.:-1.0000   1st Qu.:-1.0000  
+ Median :34.00   Median : 0.0000   Median : 0.0000   Median : 0.0000  
+ Mean   :35.49   Mean   :-0.0167   Mean   :-0.1338   Mean   :-0.1662  
+ 3rd Qu.:41.00   3rd Qu.: 0.0000   3rd Qu.: 0.0000   3rd Qu.: 0.0000  
+ Max.   :79.00   Max.   : 8.0000   Max.   : 8.0000   Max.   : 8.0000  
+     PAY_4             PAY_5             PAY_6           BILL_AMT1      
+ Min.   :-2.0000   Min.   :-2.0000   Min.   :-2.0000   Min.   :-165580  
+ 1st Qu.:-1.0000   1st Qu.:-1.0000   1st Qu.:-1.0000   1st Qu.:   3559  
+ Median : 0.0000   Median : 0.0000   Median : 0.0000   Median :  22382  
+ Mean   :-0.2207   Mean   :-0.2662   Mean   :-0.2911   Mean   :  51223  
+ 3rd Qu.: 0.0000   3rd Qu.: 0.0000   3rd Qu.: 0.0000   3rd Qu.:  67091  
+ Max.   : 8.0000   Max.   : 8.0000   Max.   : 8.0000   Max.   : 964511  
+   BILL_AMT2        BILL_AMT3         BILL_AMT4         BILL_AMT5     
+ Min.   :-69777   Min.   :-157264   Min.   :-170000   Min.   :-81334  
+ 1st Qu.:  2985   1st Qu.:   2666   1st Qu.:   2327   1st Qu.:  1763  
+ Median : 21200   Median :  20089   Median :  19052   Median : 18105  
+ Mean   : 49179   Mean   :  47013   Mean   :  43263   Mean   : 40311  
+ 3rd Qu.: 64006   3rd Qu.:  60165   3rd Qu.:  54506   3rd Qu.: 50191  
+ Max.   :983931   Max.   :1664089   Max.   : 891586   Max.   :927171  
+   BILL_AMT6          PAY_AMT1         PAY_AMT2          PAY_AMT3     
+ Min.   :-339603   Min.   :     0   Min.   :      0   Min.   :     0  
+ 1st Qu.:   1256   1st Qu.:  1000   1st Qu.:    833   1st Qu.:   390  
+ Median :  17071   Median :  2100   Median :   2009   Median :  1800  
+ Mean   :  38872   Mean   :  5664   Mean   :   5921   Mean   :  5226  
+ 3rd Qu.:  49198   3rd Qu.:  5006   3rd Qu.:   5000   3rd Qu.:  4505  
+ Max.   : 961664   Max.   :873552   Max.   :1684259   Max.   :896040  
+    PAY_AMT4         PAY_AMT5           PAY_AMT6        default.payment.next.month
+ Min.   :     0   Min.   :     0.0   Min.   :     0.0   Min.   :0.0000            
+ 1st Qu.:   296   1st Qu.:   252.5   1st Qu.:   117.8   1st Qu.:0.0000            
+ Median :  1500   Median :  1500.0   Median :  1500.0   Median :0.0000            
+ Mean   :  4826   Mean   :  4799.4   Mean   :  5215.5   Mean   :0.2212            
+ 3rd Qu.:  4013   3rd Qu.:  4031.5   3rd Qu.:  4000.0   3rd Qu.:0.0000            
+ Max.   :621000   Max.   :426529.0   Max.   :528666.0   Max.   :1.0000            
+> 
+
+This dataset contains information on default payments, demographic factors, credit data, history of payment, and bill statements of credit card clients in Taiwan from April 2008 to September 2008.
+I have put the column names to lower cases. Let’s quickly look at the dataset.
+●	There are 23 predictors and 1 response in dataset (Totally 25 columns)
+●	ID column (which is the first column) is the client identifier, this column doesn’t contain useful information and will be removed for pre-processing purpose.
+●	There’re few variables which I will convert to factor (such as sex, education, marriage). pay_0 and other pay_x features can considered to be factor variable, but let’s keep them as numeric for now.
+
+
+raw.credit.data <- raw.credit.data[,-1]
+#Remove ID column
+install.packages(“dplyr”)
+library(dplyr)
+#Install “dplyr” package, and use “head()” function to get the first few records from all the columns displayed
+head(raw.credit.data)
+   LIMIT_BAL SEX EDUCATION MARRIAGE AGE PAY_0 PAY_2 PAY_3 PAY_4 PAY_5 PAY_6 BILL_AMT1
+1     20000   2         2        1  24     2     2    -1    -1    -2    -2      3913
+2    120000   2         2        2  26    -1     2     0     0     0     2      2682
+3     90000   2         2        2  34     0     0     0     0     0     0     29239
+4     50000   2         2        1  37     0     0     0     0     0     0     46990
+5     50000   1         2        1  57    -1     0    -1     0     0     0      8617
+6     50000   1         1        2  37     0     0     0     0     0     0     64400
+  BILL_AMT2 BILL_AMT3 BILL_AMT4 BILL_AMT5 BILL_AMT6 PAY_AMT1 PAY_AMT2 PAY_AMT3 PAY_AMT4
+1      3102       689         0         0         0        0      689        0        0
+2      1725      2682      3272      3455      3261        0     1000     1000     1000
+3     14027     13559     14331     14948     15549     1518     1500     1000     1000
+4     48233     49291     28314     28959     29547     2000     2019     1200     1100
+5      5670     35835     20940     19146     19131     2000    36681    10000     9000
+6     57069     57608     19394     19619     20024     2500     1815      657     1000
+  PAY_AMT5 PAY_AMT6 default.payment.next.month
+1        0        0                          1
+2        0     2000                          1
+3     1000     5000                          0
+4     1069     1000                          0
+5      689      679                          0
+6     1000      800                          0
+
+
+install.packages("Amelia")
+library("Amelia")
+#Install "Amelia" package, and use “missmap()” function to plot a missingness map showing where missingness occurs in the dataset passed to amelia
+missmap(raw.credit.data, main = "Default credit card missing data heatmap", 
+        col=c("red", "black"), legend=F)
+ 
+The “missmap” function reordered columns to put the most missing variable farthest to the left. The rows are not reordered.
+
+See Also
+
+> colSums(sapply(raw.credit.data, is.na))
+#Form row and column sums and means for numeric arrays
+                        ID                  LIMIT_BAL                        SEX                  EDUCATION 
+                         0                          0                          0                          0 
+                  MARRIAGE                        AGE                      PAY_0                      PAY_2 
+                         0                          0                          0                          0 
+                     PAY_3                      PAY_4                      PAY_5                      PAY_6 
+                         0                          0                          0                          0 
+                 BILL_AMT1                  BILL_AMT2                  BILL_AMT3                  BILL_AMT4 
+                         0                          0                          0                          0 
+                 BILL_AMT5                  BILL_AMT6                   PAY_AMT1                   PAY_AMT2 
+                         0                          0                          0                          0 
+                  PAY_AMT3                   PAY_AMT4                   PAY_AMT5                   PAY_AMT6 
+                         0                          0                          0                          0 
+default.payment.next.month 
+                         0 
+
+PAY 0 IS THE MOST IMPORTANT VARIABLE ACCORDING TO THE DECISION TREE AND REGRESSION MODEL
+
+We have removed ID column from dataset in previous steps. We will proceed to next section before assigning any factor class to the variables.
+Trying to make more visualization.
+I will also fix the data points if they are not making any senses from the given definition.
+●	Look at Demographical variable data
+●	There are more female than male in the dataset.
+●	There are clients who finished university-level education.
+●	There are more single client than married, but the number is quite closed (53.2%:45.5%)
+
+ 
+Looks pretty balanced
+ 
+Age distribution looks pretty balanced
+ 
+Unbalanced as 0 & 3 dont make much sense
+●	MARRIAGE: Marital status (1=married, 2=single, 3=others)
+
+
+ 
+Unbalanced as categories 0,4,5 and 6 are too small.
+EDUCATION: (1=graduate school, 2=university, 3=high school, 4=others, 5=unknown, 6=unknown)
+
+
+
+
+●	
+
+install.packages("ggplot2")
+library(ggplot2)
+
+raw.credit.data.table<- table(raw.credit.data$MARRIAGE)
+barplot(raw.credit.data.table, main = "Disribution of Married vs Non-Married", xlab="Married / Not")
+
+
+To simplify the model, we code the marital status and education levels as following:
+●	For education, we will merge 0, 4, 5, 6 to 4 (others) -  this is a new category
+●	For marriage, we will merge 0 to 3 (others)- this is a new category
+
+
+After simplified the categories
+ 
+ 
+
+
+looking at the default records balance
+
+ 
+
+Less number of yes and more number of no. Need to apply some type of Data balancing methods to balance the data. But that after the data model is built.
+
+
+> prop.table(table(raw.credit.data$default.payment.next.month))
+
+     0      1 
+0.7788 0.2212 
+
+So the data is skewed Yes 78% and 22% No.
+
+Lets try if Gender has a effect on default
+
+mosaicplot(raw.credit.data$SEX ~ raw.credit.data$default.payment.next.month, shade=F, color=T,
+           main="Gender affecting the default payment next month?",
+           ylab="Default payment next month (1-Y, 0-N)",
+           xlab="Gender (1-male, 2-female)"
+)
+
+ 
+ 
+ 
+
+
+
+
+Combining 2 variables against Default
+
+mosaicplot(paste0(raw.credit.data$SEX, '-', raw.credit.data$MARRIAGE) ~ raw.credit.data$default.payment.next.month,
+           shade =F, color = T, main= "Gender with marital status against default credit?",
+           xlab="Gender - marital status", ylab="Default payment next month (1-Y, 0-N)")
+
+ 
+###Correlation###
+cordata <- cor(raw.credit.data) 
+corrplot(cordata, method="number", type="upper")
+corrplot(cordata, type="upper")
+corrplot.mixed(cordata)
+
+ 
+
+
+
+ 
+Not much correlation to binary ‘default.payment.next.month’ output. 
+
+
+
+
+
+
+
+Going to start building the model. 
+Will build many trial model to predict the default payment output.
+
+Separate the dataset into training (70%) and testing (30%).
+###data partition###
+install.packages("caret")
+library(caret)
+data(raw.credit.data)
+Split.training.data <- createDataPartition(raw.credit.data$default.payment.next.month, p=0.7, list=F)
+train.data <- raw.credit.data[Split.training.data,]
+test.data <- raw.credit.data[-Split.training.data,]
+
+prop.table(table(train.data$default.payment.next.month))
+prop.table(table(test.data$default.payment.next.month))
+
+
+> prop.table(table(raw.credit.data$default.payment.next.month))
+     0      1 
+0.7788 0.2212 
+
+> prop.table(table(train.data$default.payment.next.month))
+        0         1 
+0.7789524 0.2210476 
+
+> prop.table(table(test.data$default.payment.next.month))
+        0         1 
+0.7784444 0.2215556 
+
+The split is very much same as the original dataset.
+
+
+
+#####################3Model Building:
+Logistic Regression Model including all variables
+
+> coef(glm.model1)
+  (Intercept)            ID     LIMIT_BAL           SEX     EDUCATION      MARRIAGE           AGE         PAY_0 
+-5.834632e-01 -1.964891e-06 -7.579665e-07 -1.233673e-01 -9.770422e-02 -1.609185e-01  5.914966e-03  5.903511e-01 
+        PAY_2         PAY_3         PAY_4         PAY_5         PAY_6     BILL_AMT1     BILL_AMT2     BILL_AMT3 
+ 8.466142e-02  5.719883e-02  5.218761e-02  9.112633e-03  5.360139e-03 -4.490957e-06  3.023479e-07  1.188122e-06 
+    BILL_AMT4     BILL_AMT5     BILL_AMT6      PAY_AMT1      PAY_AMT2      PAY_AMT3      PAY_AMT4      PAY_AMT5 
+ 7.728861e-07  2.045215e-06 -7.691614e-07 -1.507822e-05 -1.155955e-05 -2.141238e-06 -3.728466e-06 -2.635246e-06 
+     PAY_AMT6 
+-8.542583e-07 
+
+Model 1 predictions: 
+CONFUSION MATRIX
+> table(test.data$default.payment.next.month, glm.model1$pred > 0.5)
+   
+    FALSE TRUE
+  0  6819  187
+  1  1534  460
+
+Prediction rate
+0.80877777777
+
+
+NEED TO CALCULATE THE CONFUSION MATRIX %
+
+ROC CHART - model 1:
+> ROC.pred <- prediction(glm.model1$pred, test.data$default.payment.next.month)
+> ROC.perf <- performance(ROC.pred, 'tpr','fpr')
+> plot(ROC.perf, colorize = TRUE, text.adj = c(-0.2,1.7))
+
+
+Logistic Regression Model including selected variables
+ 
+> coef(glm.model2)
+  (Intercept)     LIMIT_BAL           SEX     EDUCATION      MARRIAGE           AGE         PAY_0         PAY_2 
+-6.283474e-01 -9.862141e-07 -1.211684e-01 -1.003208e-01 -1.619567e-01  6.023446e-03  6.126645e-01  1.595617e-01 
+    BILL_AMT1      PAY_AMT1      PAY_AMT2 
+-1.841979e-06 -1.238603e-05 -1.014268e-05 
+
+Model 2 predictions: 
+
+CONFUSION MATRIX
+> glm.model2$pred<- predict(glm.model2, test.data, type="response")
+> table(test.data$default.payment.next.month, glm.model1$pred > 0.5)
+   
+    FALSE TRUE
+  0  6819  187
+  1  1534  460
+0.80877777777
+> table(test.data$default.payment.next.month, glm.model1$pred > 0.7)
+   
+    FALSE TRUE
+  0  6978   28
+  1  1907   87
+0.785
+> table(test.data$default.payment.next.month, glm.model1$pred > 0.9)
+   
+    FALSE TRUE
+  0  6994   12
+  1  1984   10
+
+0.778
+
+ROC CHART - model 2:
+
+> ROC.pred <- prediction(glm.model2$pred, test.data$default.payment.next.month)
+> ROC.perf <- performance(ROC.pred, 'tpr','fpr')
+> plot(ROC.perf, colorize = TRUE, text.adj = c(-0.2,1.7))
+
+ 
+raw.credit.data <- read.csv("creditcarddata.csv")
+ 
+raw.credit.data <- raw.credit.data[,-1]#remove the very first column
+#head(raw.credit.data)
+#str(raw.credit.data)
+ 
+
+#Forward Selection
+install.packages("leaps")
+library(leaps)
+fit.fwd = regsubsets(Y ~ .,data=raw.credit.data ,nvmax =23, method ="forward")
+summary(fit.fwd)
+reg.summary = summary(fit.fwd)
+ 
+#Backward Selection
+fit.fwd = regsubsets(Y ~ .,data=raw.credit.data ,nvmax =23, method ="backward")
+summary(fit.fwd)
+reg.summary = summary(fit.fwd)
+ 
+#par(mfrow =c(2,2))
+plot(reg.summary$cp, xlab="Number of Variables",ylab="Cp", type="l")
+which.max(reg.summary$bic)
+plot(reg.summary$adjr2, xlab ="Number of Variables", ylab="Adjusted RSq",type="l")
+#Separate the dataset into training (70%) and testing (30%).
+data(raw.credit.data)
+set.seed(1)
+training.credit.data <- sample(1:nrow(raw.credit.data), nrow(raw.credit.data)*0.7)
+train <- raw.credit.data[training.credit.data,]
+test <- raw.credit.data[-training.credit.data,]
+## 10-fold cv
+k=10
+set.seed (1)
+folds=sample (1:k,nrow(raw.credit.data),replace =TRUE)
+cv.errors =matrix (NA ,k,23, dimnames =list(NULL , paste (1:23) ))
+ 
+for(j in 1:k){
+  best.fit =regsubsets(Y ~.,data=raw.credit.data [folds !=j,],nvmax =23)
+  for(i in 1:23) {
+  pred = predict (best.fit ,raw.credit.data[folds ==j,], id=i)
+  cv.errors [j,i]=mean((raw.credit.data$Y[folds ==j]-pred)^2)
+	}
+ 
+
+#########################################
+Decision Tree Model
+
+> rpart.model <- rpart(default.payment.next.month ~.,data=train.data)
+> plot(rpart.model);text(rpart.model)
+> plotcp(rpart.model)
+
+ 
+> printcp(rpart.model) 
+
+Classification tree:
+rpart(formula = default.payment.next.month ~ ., data = train.data)
+
+Variables actually used in tree construction:
+[1] PAY_0    PAY_2    PAY_AMT3
+
+Root node error: 3615.9/21000 = 0.17219
+
+n= 21000 
+
+        CP nsplit rel error  xerror      xstd
+1 0.151161      0   1.00000 1.00023 0.0092801
+2 0.029870      1   0.84884 0.84914 0.0097470
+3 0.010674      2   0.81897 0.81948 0.0095363
+4 0.010000      3   0.80829 0.81272 0.0093903
+> 
+
+
+
+
+LDA Model
+Forward stepwise selection
+fit.fwd = regsubsets(Y ~ .,data=raw.credit.data ,nvmax =23, method ="forward")
+> summary(fit.fwd)
+Subset selection object
+Call: regsubsets.formula(Y ~ ., data = raw.credit.data, nvmax = 23, 
+    method = "forward")
+23 Variables  (and intercept)
+…...
+1 subsets of each size up to 23
+Selection Algorithm: forward
+  
+        
+
+
+> reg.summary$adjr2
+ [1] 0.1054611 0.1121308 0.1176104 0.1188245 0.1198118 0.1209331
+ [7] 0.1213965 0.1219052 0.1226683 0.1229165 0.1231385 0.1232943
+[13] 0.1233808 0.1234563 0.1234872 0.1234848 0.1234799 0.1234711
+[19] 0.1234553 0.1234286 0.1234008 0.1233724 0.1233435
+> reg.summary$cp
+ [1] 613.91002 386.66999 200.16710 159.61978 126.83298  89.46753
+ [7]  74.61190  58.20646  33.09671  25.60768  19.01400  14.68144
+[13]  12.72470  11.14053  11.08522  12.16712  13.33577  14.63655
+[19]  16.17795  18.08850  20.03909  22.01233  24.00000
+> reg.summary$bic
+ [1] -3323.790 -3538.999 -3715.411 -3747.409 -3771.734 -3800.666
+ [7] -3807.175 -3815.241 -3832.018 -3831.195 -3829.480 -3825.506
+[13] -3819.155 -3812.432 -3804.180 -3794.790 -3785.313 -3775.704
+[19] -3765.854 -3755.634 -3745.375 -3735.093 -3724.796
+Subset selection(indirectly estimate test error by making an adjustment to training error to account for bias due to overfitting)
+Cp, BIC, and Adj R2:
+ 
+Lowest BIC: 9
+Lowest Cp: 15
+Largest AdjR2: 15
+Backward selection got the same results.
+
+Will apply LDA on two models: 9 predictors and 15 predictors. According to the output of Forward Selection
+
+9 Predictors	15 Predictors
+LIMIT_BAL	LIMIT_BAL
+	SEX
+EDUCATION	EDUCATION
+MARRIAGE	MARRIAGE
+AGE	AGE
+PAY_0	PAY_0
+PAY_2	PAY_2
+PAY_3	PAY_3
+	PAY_5
+BILL_AMT1	BILL_AMT1
+	BILL_AMT2
+PAY_AMT1	PAY_AMT1
+	PAY_AMT2
+	PAY_AMT4
+	PAY_AMT5
+
+LDA including all predictors:
+Call:
+lda(Y ~ ., data = train)
+
+Prior probabilities of groups:
+        0         1 
+0.7790952 0.2209048 
+
+Group means:
+        X1       X2       X3       X4       X5         X6         X7
+0 178772.2 1.613349 1.839435 1.555651 35.43029 -0.2118452 -0.3014486
+1 129773.7 1.564561 1.901703 1.527269 35.73572  0.6781634  0.4651865
+          X8         X9        X10        X11      X12      X13
+0 -0.3208239 -0.3593912 -0.3947191 -0.4051708 51966.50 49606.98
+1  0.3632248  0.2672990  0.1799957  0.1207157 48669.32 47274.77
+       X14      X15      X16      X17      X18      X19      X20
+0 47668.11 43844.09 40646.25 39191.75 6250.195 6764.507 5768.347
+1 45115.74 42070.32 39510.69 38086.38 3344.065 3253.332 3278.232
+       X21      X22      X23
+0 5253.964 5294.811 5773.220
+1 3167.297 3227.075 3411.908
+
+Coefficients of linear discriminants:
+              LD1
+X1  -6.269348e-07
+X2  -1.130771e-01
+X3  -1.019860e-01
+X4  -1.485945e-01
+X5   1.140351e-02
+X6   6.989168e-01
+X7   1.272841e-01
+X8   7.189913e-02
+X9   3.674255e-02
+X10  8.184656e-02
+X11 -1.376060e-02
+X12 -4.207138e-06
+X13  1.226325e-06
+X14 -2.347416e-08
+X15 -5.741234e-07
+X16  9.515446e-07
+X17 -3.085502e-07
+X18 -6.387709e-06
+X19 -2.042541e-06
+X20 -9.756511e-07
+X21 -2.334571e-06
+X22 -1.013633e-06
+X23 -9.437679e-07
+> names(lda.pred)
+[1] "class"     "posterior" "x"        
+> lda.Y = lda.pred$Y
+> table(lda.pred$class, test$Y)
+   
+       0    1
+  0 6785 1500
+  1  218  497
+> mean(lda.pred$class == test$Y)
+[1] 0.8091111
+ 
+
+LDA including 9 predictors:
+> lda.fit.1
+Call:
+lda(Y ~ X1 + X3 + X4 + X5 + X6 + X7 + X8 + X12 + X18, data = train)
+
+Prior probabilities of groups:
+        0         1 
+0.7790952 0.2209048 
+
+Group means:
+        X1       X3       X4       X5         X6         X7
+0 178772.2 1.839435 1.555651 35.43029 -0.2118452 -0.3014486
+1 129773.7 1.901703 1.527269 35.73572  0.6781634  0.4651865
+          X8      X12      X18
+0 -0.3208239 51966.50 6250.195
+1  0.3632248 48669.32 3344.065
+
+Coefficients of linear discriminants:
+              LD1
+X1  -8.387782e-07
+X3  -1.066422e-01
+X4  -1.439594e-01
+X5   1.221120e-02
+X6   7.184470e-01
+X7   1.396206e-01
+X8   1.351997e-01
+X12 -3.194394e-06
+X18 -6.718145e-06
+
+> names(lda.pred.1)
+[1] "class"     "posterior" "x"        
+> lda.Y.1 = lda.pred.1$Y
+> table(lda.pred.1$class, test$Y)
+   
+       0    1
+  0 6788 1496
+  1  215  501
+> mean(lda.pred.1$class==test$Y)
+[1] 0.8098889
+ 
+
+
+LDA including 15 predictors
+> lda.fit.2
+Call:
+lda(Y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X10 + X12 + X13 + 
+    X18 + X19 + X21 + X22, data = train)
+
+Prior probabilities of groups:
+        0         1 
+0.7790952 0.2209048 
+
+Group means:
+        X1       X2       X3       X4       X5         X6
+0 178772.2 1.613349 1.839435 1.555651 35.43029 -0.2118452
+1 129773.7 1.564561 1.901703 1.527269 35.73572  0.6781634
+          X7         X8        X10      X12      X13
+0 -0.3014486 -0.3208239 -0.3947191 51966.50 49606.98
+1  0.4651865  0.3632248  0.1799957 48669.32 47274.77
+       X18      X19      X21      X22
+0 6250.195 6764.507 5253.964 5294.811
+1 3344.065 3253.332 3167.297 3227.075
+
+Coefficients of linear discriminants:
+              LD1
+X1  -6.562780e-07
+X2  -1.129337e-01
+X3  -1.016668e-01
+X4  -1.496065e-01
+X5   1.139918e-02
+X6   7.019590e-01
+X7   1.271678e-01
+X8   8.509808e-02
+X10  9.100243e-02
+X12 -4.362689e-06
+X13  1.330219e-06
+X18 -6.745994e-06
+X19 -2.130198e-06
+X21 -1.996410e-06
+X22 -1.447777e-06
+
+> names(lda.pred.2)
+[1] "class"     "posterior" "x"        
+> lda.Y.2 = lda.pred.2$Y
+> table(lda.pred.2$class, test$Y)
+   
+       0    1
+  0 6787 1500
+  1  216  497
+mean(lda.pred.2$class==test$Y)
+[1] 0.8093333
+
+ 
+
+No big differences for the three lda models with different numbers of predictors
+
+=======================
+QDA Model
+
+QDA including all predictors
+> qda.Y = qda.pred$Y
+> table(qda.pred$class, test$Y)
+   
+       0    1
+  0 3461  422
+  1 3542 1575
+> mean(qda.pred$class==test$Y)
+[1] 0.5595556
+ 
+
+
+QDA including 9 predictors
+Call:
+qda(Y ~ X1 + X3 + X4 + X5 + X6 + X7 + X8 + X12 + X18, data = train)
+
+Prior probabilities of groups:
+        0         1 
+0.7790952 0.2209048 
+
+Group means:
+        X1       X3       X4       X5         X6         X7
+0 178772.2 1.839435 1.555651 35.43029 -0.2118452 -0.3014486
+1 129773.7 1.901703 1.527269 35.73572  0.6781634  0.4651865
+          X8      X12      X18
+0 -0.3208239 51966.50 6250.195
+1  0.3632248 48669.32 3344.065
+> qda.pred = predict(qda.fit.0, test)
+> names(qda.pred)
+[1] "class"     "posterior"
+> qda.Y = qda.pred$Y
+> table(qda.pred$class, test$Y)
+   
+       0    1
+  0 5756  840
+  1 1247 1157
+> mean(qda.pred$class==test$Y)
+[1] 0.7681111
+ 
+QDA including 15 predictors
+   
+       0    1
+  0 5049  695
+  1 1954 1302
+> mean(qda.pred$class==test$Y)
+[1] 0.7056667
+ 
