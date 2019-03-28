@@ -1,3 +1,5 @@
+# Key words: Exploratory Data Analysis, Classification
+
 Credit lenders suffer financial consequences when credit card clients default on payments. Lenders screen all applicants by 
 collecting information, such as age, education, gender, history of past payments, and marital status. With data characteristics 
 collected from credit clients, data mining techniques, such as logistics regression, linear discriminant analysis, decision tree, 
