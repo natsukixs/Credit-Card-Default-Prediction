@@ -1,4 +1,5 @@
 # Key words: Exploratory Data Analysis, Classification
+--###############Modified Ver. This is just to test github################# 
 
 Credit lenders suffer financial consequences when credit card clients default on payments. Lenders screen all applicants by 
 collecting information, such as age, education, gender, history of past payments, and marital status. With data characteristics 
@@ -665,4 +666,7 @@ QDA including 15 predictors
   1 1954 1302
 > mean(qda.pred$class==test$Y)
 [1] 0.7056667
- 
+
+
+-----------------
+This is just to test github 
